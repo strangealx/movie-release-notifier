@@ -1,4 +1,4 @@
-const Parser = require('./index');
+const Parser = require('../');
 
 const config = {
     encoding: 'windows-1251',
@@ -24,8 +24,8 @@ class KinopoiskDigitalReleaseParser extends Parser {
                     const releases = Object.keys(release_html).map(index => {
                         const release = release_html[index];
                         return {
-                            name: _self.parseName(release),
-                            timestamp: _self.parseDate(release),
+                            ..._self.parseDate(release),
+                            ..._self.parseName(release),
                             ..._self.parseRating(release)
                         }
                     });
@@ -38,6 +38,7 @@ class KinopoiskDigitalReleaseParser extends Parser {
     }
 
     parseName(release) {
+        const name = {};
         let name_ru = release.querySelector('.name a');
         let name_en = name_ru.parentNode.nextSibling.nextSibling;
         name_ru = name_ru
@@ -48,21 +49,23 @@ class KinopoiskDigitalReleaseParser extends Parser {
             .toLowerCase()
             .replace(/\s\(20[0-9]{2}\)/, '')
             .replace(/(.*),\s(the)$/, '$2 $1');
-        return {
-            en: name_en,
-            ru: name_ru
-        }
+        if (name_ru) name.ru = name_ru;
+        if (name_en) name.en = name_en;
+        return {name: { ...name }};
+        
     }
 
     parseDate(release) {
         let date = release
             .querySelector('meta[itemProp="startDate"]')
             .getAttribute('content');
-        return new Date(date).valueOf();
+        return { timestamp: new Date(date).valueOf() };
     }
 
     parseRating(release) {
-        let rating = release.querySelector('.ajax_rating u').textContent;
+        let rating = release
+            .querySelector('.ajax_rating u')
+            .textContent;
         if (rating.match(/%/) || !parseFloat(rating)) {
             return undefined;
         }
