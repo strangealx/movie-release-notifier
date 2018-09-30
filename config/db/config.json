@@ -1,0 +1,10 @@
+{
+    "db": {
+        "authDbName": "admin",
+        "name": "movies",
+        "host": "localhost",
+        "username": "admin",
+        "password": "212@#qweLK",
+        "port": 27017
+    }
+}

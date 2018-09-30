@@ -1,40 +1,16 @@
-const Parser = require('../');
+const Parser = require('../index');
 
 const config = {
     encoding: 'windows-1251',
     name: 'kinopoisk digital releases',
-    url: 'https://www.kinopoisk.ru/comingsoon/digital/'
+    url: 'https://www.kinopoisk.ru/comingsoon/digital/',
+    releaseSelector: '.premier_item'
 }
 
 class KinopoiskDigitalReleaseParser extends Parser {
 
     constructor() {
         super({ ...config });
-    }
-
-    parse() {
-        return this.get()
-            .then((document) => {
-                const _self = this;
-                const release_html = document.querySelectorAll('.premier_item');
-                return new Promise((resolve, reject) => {
-                    if (!release_html) {
-                        reject(new Error('no data found'));
-                    }
-                    const releases = Object.keys(release_html).map(index => {
-                        const release = release_html[index];
-                        return {
-                            ..._self.parseDate(release),
-                            ..._self.parseName(release),
-                            ..._self.parseRating(release)
-                        }
-                    });
-                    resolve(releases); 
-                });
-            })
-            .catch((e) => {
-                console.error('Parser error: ' + e.message)
-            });
     }
 
     parseName(release) {
@@ -71,7 +47,7 @@ class KinopoiskDigitalReleaseParser extends Parser {
         }
         rating = parseFloat(rating);
         return { rating: { kinopoisk_score: rating } };
-    }
+    } 
 }
 
 module.exports = new KinopoiskDigitalReleaseParser();
