@@ -4,15 +4,33 @@ const mergeSimilarReleases = require('../../../utils/merge-similar-releases');
 const { Schema } = mongoose;
 
 /**
+ * name schema for MongoRelease
+ * @memberof MongoRelease
+ */
+const nameSchema = new Schema({
+    ru: String,
+    en: String,
+}, { _id: false });
+
+/**
  * Class representing a release db schema
  * @class MongoRelease
  * @mixes {mongoReleaseSchema.methods}
  */
 const mongoReleaseSchema = new Schema({
-    timestamp: Date,
+    timestamp: {
+        type: Date,
+        required: true,
+    },
     name: {
-        ru: String,
-        en: String,
+        type: nameSchema,
+        required: true,
+        validate: [
+            v => (
+                !!(v.en || v.ru)
+            ),
+            'provided name is invalid',
+        ],
     },
     rating: {
         kinopoisk_score: Number,
@@ -30,6 +48,12 @@ const mongoReleaseSchema = new Schema({
  * @return {Promise.<Object>} saved/updated/canceled document
  */
 mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
+    // simple validation
+    if (!this.name || !this.timestamp) {
+        return Promise.reject(
+            new Error('release item is invalid: no name or timestamp provided'),
+        );
+    }
     // find query
     const query = {
         $or: [
@@ -42,29 +66,39 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
         .then((doc) => {
             // save new if none is found and exit
             if (!doc) {
-                return this.save();
+                return this.save()
+                    .then(savedDoc => (
+                        Promise.resolve({
+                            type: 'saved',
+                            data: savedDoc,
+                        })
+                    ));
             }
             // found one
             const stored = doc.toObject();
             // new one
             const toBeStored = this.toObject();
-            // merged found and new
+            // merged found one and new one
             const merged = mergeSimilarReleases(stored, toBeStored);
             // nothing is new or modified
             if (doc.isTheSame(merged)) {
                 return Promise.resolve({
-                    canceled: true,
-                    ...stored,
-                    _id: doc._id,
+                    type: 'canceled',
+                    data: {
+                        ...stored,
+                        _id: doc._id,
+                    },
                 });
             }
             // update db document
             return this.model('MongoRelease').updateOne({ _id: doc._id }, { $set: merged })
                 .then(() => (
                     Promise.resolve({
-                        modified: true,
-                        ...merged,
-                        _id: doc._id,
+                        type: 'modified',
+                        data: {
+                            ...merged,
+                            _id: doc._id,
+                        },
                     })
                 ));
         })
@@ -84,10 +118,18 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
 mongoReleaseSchema.methods.isTheSame = function isTheSame(doc) {
     const { rating, name, timestamp } = this;
     const { stringify } = JSON;
+    // data objects should be sorted
+    // in same order, because we compare
+    // them as strings
+    const compareData = {
+        timestamp: doc.timestamp,
+        name: doc.name,
+        rating: doc.rating,
+    };
     // compares objects data as strings
     // the most simple way to compare objects
     // but you should take care of objects structure
-    return stringify(doc) === stringify({ timestamp: timestamp.getTime(), name, rating });
+    return stringify(compareData) === stringify({ timestamp: timestamp.getTime(), name, rating });
 };
 
 module.exports = mongoReleaseSchema;

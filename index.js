@@ -19,16 +19,9 @@ parserList.getUniqueList()
             const dbRelease = new DBRelease(release);
             dbRelease.saveOrUpdate()
                 .then((doc) => {
+                    const { data, type } = doc;
                     count += 1;
-                    if (doc.modified) {
-                        console.log(`${count}. Modified: ${release.name.ru || release.name.en}`);
-                        return;
-                    }
-                    if (doc.canceled) {
-                        console.log(`${count}. Canceled: ${release.name.ru || release.name.en}`);
-                        return;
-                    }
-                    console.log(`${count}. Saved: ${release.name.ru || release.name.en}`);
+                    console.log(`${count}. ${type}: ${data.name.ru || data.name.en}`);
                 })
                 .catch(console.error.bind(console, 'saveOrUpdate error: '));
         });
