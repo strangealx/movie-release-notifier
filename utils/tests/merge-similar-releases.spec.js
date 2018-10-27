@@ -36,16 +36,19 @@ describe('utils', () => {
                 metacritic_user_score: release2.rating.metacritic_user_score,
             },
         };
+
         it('should correctly merge provided releases', () => {
             const merged = mergeSimilarReleases(release1, release2);
             expect(stringify(merged) === stringify(result)).toBe(true);
         });
+
         it('should merge an earlier timestamp', () => {
             const merged1 = mergeSimilarReleases(release1, release2);
             const merged2 = mergeSimilarReleases(release2, release1);
             expect(merged1.timestamp).toBe(min(release1.timestamp, release2.timestamp));
             expect(merged2.timestamp).toBe(min(release1.timestamp, release2.timestamp));
         });
+
         it('should return some defaults on invalid data', () => {
             const defaultResult = { timestamp: 9007199254740991, name: {}, rating: {} };
             const merged = mergeSimilarReleases(null, null);

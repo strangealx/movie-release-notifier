@@ -6,6 +6,7 @@ describe('utils', () => {
             expect(isObject({})).toBe(true);
             expect(isObject(it)).toBe(true);
         });
+
         it('should return false when provided value is not an object', () => {
             expect(isObject('test')).toBe(false);
             expect(isObject(1)).toBe(false);

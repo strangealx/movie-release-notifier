@@ -47,12 +47,12 @@ describe('MongoReleaseModel', () => {
     ));
 
     describe('#isTheSame()', () => {
-        test('should return true when match', () => {
+        it('should return true when releases match', () => {
             const result = release.isTheSame(data);
             expect(result).toBe(true);
         });
 
-        test('should return true when match with a shuffled key order', () => {
+        it('should return true when releases match with a shuffled key order', () => {
             const shuffled = {};
             const keys = Object.keys(data);
             for (let i = keys.length - 1; i >= 0; i -= 1) {
@@ -63,7 +63,7 @@ describe('MongoReleaseModel', () => {
             expect(result).toBe(true);
         });
 
-        test('should return false when dismatch', () => {
+        it('should return false when releases dismatch', () => {
             data.timestamp += 1;
             const result = release.isTheSame(data);
             expect(result).toBe(false);
@@ -71,7 +71,7 @@ describe('MongoReleaseModel', () => {
     });
 
     describe('#saveOrUpdate', () => {
-        test('should save object if none is found', () => {
+        it('should save object if none is found', () => {
             const next = { ...data };
             next.name = { en: 'test 2' };
             const nextRelease = new MongoRelease(next);
@@ -81,7 +81,7 @@ describe('MongoReleaseModel', () => {
                 });
         });
 
-        test('should not save object if same is found', () => {
+        it('should not save object if same is found', () => {
             const nextRelease = new MongoRelease(data);
             return nextRelease.saveOrUpdate()
                 .then((savedData) => {
@@ -89,7 +89,7 @@ describe('MongoReleaseModel', () => {
                 });
         });
 
-        test('should modify object', () => {
+        it('should modify saved object with new data', () => {
             data.timestamp -= 1;
             const nextRelease = new MongoRelease(data);
             return nextRelease.saveOrUpdate()
@@ -98,7 +98,7 @@ describe('MongoReleaseModel', () => {
                 });
         });
 
-        test('should not modify object if new release timestamp is greater', () => {
+        it('should not modify saved object if new object has later release date', () => {
             data.timestamp += 1;
             const nextRelease = new MongoRelease(data);
             return nextRelease.saveOrUpdate()
@@ -107,7 +107,7 @@ describe('MongoReleaseModel', () => {
                 });
         });
 
-        test('should throw error on saving empty data object', () => {
+        it('should throw error on saving empty data object', () => {
             const nextRelease = new MongoRelease({});
             return nextRelease.saveOrUpdate()
                 .then((savedData) => {
@@ -118,7 +118,7 @@ describe('MongoReleaseModel', () => {
                 });
         });
 
-        test('should throw error on saving invalid data', () => {
+        it('should throw error on saving invalid data', () => {
             const nextRelease = new MongoRelease({ name: {}, timestamp: 1 });
             return nextRelease.saveOrUpdate()
                 .then((savedData) => {

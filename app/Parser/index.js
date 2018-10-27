@@ -17,8 +17,8 @@ class Parser {
      * @param {Object} options parser config
      * @param {String} options.url source url
      * @param {String} options.releaseSelector jQuery style release selector
-     * @param {String} options.encoding source encoding
-     * @param {String} [options.name] parser name
+     * @param {String} options.name parser name
+     * @param {String} [options.encoding] source encoding
      */
     constructor(ReleaseModel, options) {
         if (!(new ReleaseModel() instanceof Release)) {
@@ -70,18 +70,21 @@ class Parser {
     }
 
     parse(document) {
+        const { ReleaseModel } = this;
         const { releaseSelector } = this.options;
+        if (!document.querySelectorAll || typeof document.querySelectorAll !== 'function') {
+            return Promise.reject(new Error('provided document is not a jsdom document'));
+        }
         const releaseHTML = document.querySelectorAll(releaseSelector);
         return new Promise((resolve, reject) => {
             if (!releaseHTML) {
-                reject(new Error('no data found'));
+                return reject(new Error('no data found'));
             }
             const releases = Object.keys(releaseHTML).map((index) => {
-                const { ReleaseModel } = this;
                 const release = new ReleaseModel(releaseHTML[index]);
                 return release.parsed;
             });
-            resolve(releases);
+            return resolve(releases || []);
         });
     }
 
@@ -92,7 +95,7 @@ class Parser {
             .then(dom => (
                 new Promise((resolve) => {
                     const { document } = dom.window;
-                    resolve(document);
+                    return resolve(document);
                 })
             ));
     }
@@ -109,9 +112,10 @@ class Parser {
                     return reject(error);
                 }
                 const rss = new RSS();
-                let data = Buffer.from(body, 'binary');
+                let data = body;
                 if (encoding) {
                     const conv = new Iconv(encoding, 'utf8');
+                    data = Buffer.from(data);
                     data = conv.convert(body).toString();
                 }
                 return resolve(rss.parseString(data));

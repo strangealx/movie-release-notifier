@@ -39,7 +39,7 @@ class Release {
      * @type {Object}
      */
     get date() {
-        return Date.now();
+        return {};
     }
 
     /**
