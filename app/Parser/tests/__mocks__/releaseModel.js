@@ -1,4 +1,4 @@
-const ReleaseModel = require('../app/Release/index');
+const ReleaseModel = require('../../../Release');
 
 class TestReleaseModel extends ReleaseModel {
     constructor(release) {
@@ -8,7 +8,9 @@ class TestReleaseModel extends ReleaseModel {
 
     get name() {
         return {
-            en: 'test',
+            name: {
+                en: 'test',
+            },
         };
     }
 

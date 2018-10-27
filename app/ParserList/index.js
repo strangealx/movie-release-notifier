@@ -41,7 +41,7 @@ class ParserList {
      */
     addNewParser(parser) {
         if (!(parser instanceof Parser)) {
-            console.error('Parser should be an instace of Parser class');
+            console.error('Parser should be an instance of Parser class');
             return this;
         }
         // add new parser to the list
@@ -56,11 +56,12 @@ class ParserList {
     getList() {
         const { parserList } = this;
         // it`s ok to handle requests with Promise.all while
-        // there is a little amount parsers
+        // there is a little amount of parsers
         const results = parserList.map(parser => parser.getList());
-        return Promise.all(results).then(releaseList => (
-            Promise.resolve(Array.prototype.concat(...releaseList))
-        ));
+        return Promise.all(results)
+            .then(releaseList => (
+                Promise.resolve(Array.prototype.concat(...releaseList))
+            ));
     }
 
     /**

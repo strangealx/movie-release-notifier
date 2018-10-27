@@ -21,7 +21,7 @@ class Parser {
      * @param {String} [options.encoding] source encoding
      */
     constructor(ReleaseModel, options) {
-        if (!(new ReleaseModel() instanceof Release)) {
+        if (!ReleaseModel || !(new ReleaseModel() instanceof Release)) {
             throw new Error('ReleaseModel is not instance of Release class');
         }
         if (!options.name || !options.url) {
@@ -69,6 +69,11 @@ class Parser {
         }
     }
 
+    /**
+     * process jsdom document to array of release data objects
+     * @param {Object} document jsdom document object
+     * @return {Promise<Object[]>} release data objects array
+     */
     parse(document) {
         const { ReleaseModel } = this;
         const { releaseSelector } = this.options;
@@ -88,6 +93,10 @@ class Parser {
         });
     }
 
+    /**
+     * makes request for html document
+     * @return {Promise<Object>} jsdom document
+     */
     getHTML() {
         const { url } = this.options;
         const { fromURL } = JSDOM;
@@ -100,6 +109,10 @@ class Parser {
             ));
     }
 
+    /**
+     * makes request for rss feed
+     * @return {Promise<Object>} processed rss feed as js object
+     */
     getRSS() {
         const { url, encoding } = this.options;
         return new Promise((resolve, reject) => {

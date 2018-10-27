@@ -1,7 +1,5 @@
 const Parser = require('../../Parser');
-const TestRelease = require('../../../__mocks__/releaseModel');
-
-jest.mock('../../../__mocks__/jsdom');
+const TestRelease = require('./__mocks__/releaseModel');
 
 describe('Parser', () => {
     let parser;
@@ -22,6 +20,14 @@ describe('Parser', () => {
         expect(name).toBe('test');
         expect(releaseSelector).toBe('.item');
         expect(new ReleaseModel({}) instanceof TestRelease).toBe(true);
+    });
+
+    it('should throw on invalid ReleaseModel or no provided', () => {
+        expect(() => new Parser()).toThrow();
+    });
+
+    it('should throw on invalid ReleaseModel or no provided', () => {
+        expect(() => new Parser(TestRelease, {})).toThrow();
     });
 
     describe('#dataType', () => {
@@ -122,7 +128,9 @@ describe('Parser', () => {
 
         it('should process document from jsdom to collection of release objects', () => {
             const result = {
-                en: 'test',
+                name: {
+                    en: 'test',
+                },
                 rating: {
                     metacritic_score: 10,
                 },
