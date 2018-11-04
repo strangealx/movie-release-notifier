@@ -8,7 +8,7 @@ const kinopoiskConfig = {
 const metacriticConfig = {
     name: 'metacritic releases',
     url: 'https://www.metacritic.com/browse/dvds/release-date/coming-soon/date',
-    releaseSelector: '.summary_row',
+    releaseSelector: '.clamp-list tr:not(.spacer)',
 };
 
 module.exports = {

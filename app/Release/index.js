@@ -7,7 +7,9 @@ class Release {
      * @param {Node} release - node in the DOM tree.
      */
     constructor(release) {
-        if (!release) return null;
+        if (!release) {
+            throw new Error('no release data provided');
+        }
         this.release = release;
         return this;
     }
@@ -30,7 +32,7 @@ class Release {
      * @type {Object}
      */
     get name() {
-        return {};
+        return { name: {} };
     }
 
     /**
@@ -39,7 +41,7 @@ class Release {
      * @type {Object}
      */
     get date() {
-        return {};
+        return { timestamp: 0 };
     }
 
     /**
@@ -48,7 +50,7 @@ class Release {
      * @type {Object}
      */
     get rating() {
-        return {};
+        return { rating: {} };
     }
 }
 

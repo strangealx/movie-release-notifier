@@ -26,5 +26,17 @@
     "eslint-plugin-jest": "^21.24.1",
     "jest": "^23.6.0",
     "jsdoc": "^3.5.5"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "collectCoverageFrom": [
+      "<rootDir>/app/**/*.{js}",
+      "<rootDir>/utils/**/*.{js}",
+      "!<rootDir>/node_modules/",
+      "!<rootDir>/app/**/config.js",
+      "!<rootDir>/app/db/models/**/*.js",
+      "!<rootDir>/app/db/connection/**/*.js",
+      "!<rootDir>/app/**/test-*.js"
+    ]
   }
 }

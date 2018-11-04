@@ -10,6 +10,8 @@
         "class-methods-use-this": "off"
     },
     "env": {
-        "jest": true
+        "jest": true,
+        "browser": true,
+        "jest/globals": true
     }
 }

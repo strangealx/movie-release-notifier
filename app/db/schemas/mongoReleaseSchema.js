@@ -26,9 +26,7 @@ const mongoReleaseSchema = new Schema({
         type: nameSchema,
         required: true,
         validate: [
-            v => (
-                !!(v.en || v.ru)
-            ),
+            v => !!(v.en || v.ru),
             'provided name is invalid',
         ],
     },

@@ -22,8 +22,14 @@ class KinopoiskDigitalRelease extends Release {
     get name() {
         const { release } = this;
         const name = {};
-        let nameRu = release.querySelector('.name a');
-        let nameEn = nameRu.parentNode.nextSibling.nextSibling;
+        let nameRu = '';
+        let nameEn = '';
+        nameRu = release.querySelector('.name a');
+        if (!nameRu) return super.name;
+        nameEn = nameRu
+            .parentNode
+            .nextSibling
+            .nextSibling;
         nameRu = nameRu
             .textContent
             .toLowerCase()
@@ -45,9 +51,9 @@ class KinopoiskDigitalRelease extends Release {
      */
     get date() {
         const { release } = this;
-        const date = release
-            .querySelector('meta[itemProp="startDate"]')
-            .getAttribute('content');
+        let date = release.querySelector('meta[itemProp="startDate"]');
+        if (!date) return super.date;
+        date = date.getAttribute('content');
         return { timestamp: new Date(date).valueOf() };
     }
 
@@ -57,14 +63,14 @@ class KinopoiskDigitalRelease extends Release {
      */
     get rating() {
         const { release } = this;
-        let rating = release
-            .querySelector('.ajax_rating u')
-            .textContent;
+        let rating = release.querySelector('.ajax_rating u');
+        if (!rating) return super.rating;
+        rating = rating.textContent;
         // there is 2 kinds of rating in same node
-        // if it contains "%" then it is await raiting
-        // else it is kinopoisk score
+        // if it contains "%" then it is an await raiting
+        // else it is a kinopoisk score
         if (rating.match(/%/) || !parseFloat(rating)) {
-            return undefined;
+            return super.rating;
         }
         rating = parseFloat(rating);
         return { rating: { kinopoisk_score: rating } };

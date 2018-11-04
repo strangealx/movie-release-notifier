@@ -54,5 +54,11 @@ describe('utils', () => {
             const merged = mergeSimilarReleases(null, null);
             expect(stringify(merged) === stringify(defaultResult)).toBe(true);
         });
+
+        it('should return handle invalid timestamp data type', () => {
+            release1.timestamp = 'test';
+            const merged = mergeSimilarReleases(release1, release2);
+            expect(merged.timestamp).toBe(release2.timestamp);
+        });
     });
 });

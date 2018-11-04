@@ -21,7 +21,7 @@ class Parser {
      * @param {String} [options.encoding] source encoding
      */
     constructor(ReleaseModel, options) {
-        if (!ReleaseModel || !(new ReleaseModel() instanceof Release)) {
+        if (!ReleaseModel || !(ReleaseModel.prototype instanceof Release)) {
             throw new Error('ReleaseModel is not instance of Release class');
         }
         if (!options.name || !options.url) {

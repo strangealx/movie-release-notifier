@@ -21,8 +21,9 @@ class MetacriticRelease extends Release {
      */
     get name() {
         const { release } = this;
-        const name = release
-            .querySelector('.title a')
+        let name = release.querySelector('a.title');
+        if (!name) return super.name;
+        name = name
             .textContent
             .toLowerCase()
             .trim();
@@ -35,8 +36,9 @@ class MetacriticRelease extends Release {
      */
     get date() {
         const { release } = this;
-        const date = release
-            .querySelector('.date_wrapper span')
+        let date = release.querySelectorAll('.clamp-details span')[1];
+        if (!date) return super.date;
+        date = date
             .textContent
             .toLowerCase();
         return { timestamp: new Date(date).valueOf() };
@@ -49,28 +51,24 @@ class MetacriticRelease extends Release {
     get rating() {
         const { release } = this;
         let rating = {};
-        let metacriticScore = release
-            .querySelector('.metascore_w')
-            .textContent;
-        let metacriticUserScore = release
-            .nextSibling
-            .nextSibling
-            .querySelector('.userscore_text span:last-child');
-        if (metacriticUserScore) {
-            metacriticUserScore = metacriticUserScore.textContent;
-        }
-        // metacritic score is int
-        metacriticScore = parseInt(metacriticScore, 10);
-        // metacritic user score is float
-        metacriticUserScore = parseFloat(metacriticUserScore);
+        const metacriticScore = release.querySelector('.metascore_w:not(.user)');
+        const metacriticUserScore = release.querySelector('.metascore_w.user');
+        if (!metacriticScore && !metacriticUserScore) return super.rating;
         if (metacriticScore) {
-            rating = { metacriticScore };
+            let score = metacriticScore.textContent;
+            // metacritic score is int
+            score = parseInt(score, 10);
+            if (score) {
+                rating = { metacritic_score: score };
+            }
         }
         if (metacriticUserScore) {
-            rating = { ...rating, metacriticUserScore };
-        }
-        if (!metacriticScore && !metacriticUserScore) {
-            return null;
+            let score = metacriticUserScore.textContent;
+            // metacritic user score is float
+            score = parseFloat(score);
+            if (score) {
+                rating = { ...rating, metacritic_user_score: score };
+            }
         }
         return { rating: { ...rating } };
     }

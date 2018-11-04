@@ -2,7 +2,7 @@ const ReleaseModel = require('../../../Release');
 
 class TestReleaseModel extends ReleaseModel {
     constructor(release) {
-        const instance = super(release);
+        const instance = super(release || 'test');
         return instance;
     }
 

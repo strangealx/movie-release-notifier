@@ -13,18 +13,17 @@ const mergeDeep = (target, ...sources) => {
         return target;
     }
     const source = sources.shift();
-    // make merging recursion magic :)
+    // make merging by recursion magic :)
     if (isObject(target) && isObject(source)) {
         const keys = Object.keys(source);
         for (let i = 0; i < keys.length; i += 1) {
             const key = keys[i];
             if (isObject(source[key])) {
-                if (!target[key]) {
+                if (!target[key] || !isObject(target[key])) {
                     Object.assign(target, { [key]: {} });
                 }
                 mergeDeep(target[key], source[key]);
-            }
-            if (source[key] || source[key] === 0) {
+            } else {
                 Object.assign(target, { [key]: source[key] });
             }
         }
