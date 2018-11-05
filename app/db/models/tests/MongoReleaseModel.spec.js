@@ -46,6 +46,29 @@ describe('MongoReleaseModel', () => {
         mongoose.disconnect()
     ));
 
+    describe('#toBeReleased()', () => {
+        it('should return one release as to be released', () => (
+            MongoRelease.toBeReleased()
+                .then((releases) => {
+                    expect(releases.length).toBe(1);
+                })
+        ));
+
+        it('should not return releases with not actual date', () => {
+            const next = { ...data };
+            next.name = { ru: 'test 2' };
+            next.timestamp = Date.now() - 60 * 60 * 24 * 1000;
+            const nextRelease = new MongoRelease(next);
+            return nextRelease.saveOrUpdate()
+                .then(() => (
+                    MongoRelease.toBeReleased()
+                ))
+                .then((releases) => {
+                    expect(releases.length).toBe(1);
+                });
+        });
+    });
+
     describe('#isTheSame()', () => {
         it('should return true when releases match', () => {
             const result = release.isTheSame(data);

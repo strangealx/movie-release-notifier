@@ -12,7 +12,8 @@ parserList
     .addNewParser(new Parser(KinopoiskDigitalRelease, kinopoiskConfig))
     .addNewParser(new Parser(MetacriticRelease, metacriticConfig));
 
-parserList.getUniqueList()
+DBRelease.toBeReleased()
+    .then(() => parserList.getUniqueList())
     .then((releaseList) => {
         let count = 0;
         releaseList.forEach((release) => {

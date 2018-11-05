@@ -130,4 +130,12 @@ mongoReleaseSchema.methods.isTheSame = function isTheSame(doc) {
     return stringify(compareData) === stringify({ timestamp: timestamp.getTime(), name, rating });
 };
 
+mongoReleaseSchema.statics.toBeReleased = function toBeReleased() {
+    const today = new Date().setHours(0, 0, 0, 0);
+    return this
+        .find({ timestamp: { $gte: today } })
+        .sort({ timestamp: 1 })
+        .limit(100);
+};
+
 module.exports = mongoReleaseSchema;
