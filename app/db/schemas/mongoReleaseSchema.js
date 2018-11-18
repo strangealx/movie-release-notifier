@@ -42,7 +42,7 @@ const mongoReleaseSchema = new Schema({
 /**
  * finds and updates/inserts new release into db
  * @mixin saveOrUpdate
- * @memberof MongoRelease
+ * @memberof mongoReleaseSchema
  * @return {Promise.<Object>} saved/updated/canceled document
  */
 mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
@@ -106,7 +106,7 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
 /**
  * compares db stored data with provided data
  * @mixin isTheSame
- * @memberof MongoRelease
+ * @memberof mongoReleaseSchema
  * @param {Object} doc data to be compared
  * @param {Number} doc.timestamp release date timestamp
  * @param {Object} doc.name release name object
@@ -130,12 +130,17 @@ mongoReleaseSchema.methods.isTheSame = function isTheSame(doc) {
     return stringify(compareData) === stringify({ timestamp: timestamp.getTime(), name, rating });
 };
 
+/**
+ * finds releases that are not released yet
+ * @mixin toBeReleased
+ * @memberof mongoReleaseSchema
+ * @return {Object[]} list of ready to be released documents
+ */
 mongoReleaseSchema.statics.toBeReleased = function toBeReleased() {
     const today = new Date().setHours(0, 0, 0, 0);
     return this
         .find({ timestamp: { $gte: today } })
-        .sort({ timestamp: 1 })
-        .limit(100);
+        .sort({ timestamp: 1 });
 };
 
 module.exports = mongoReleaseSchema;
