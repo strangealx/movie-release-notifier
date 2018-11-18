@@ -54,6 +54,11 @@ describe('ParserList', () => {
             expect.assertions(1);
             return expect(parserList.getList()).rejects.toEqual(new Error('test error'));
         });
+
+        it('should throw error on no parsers provided', () => {
+            const emptyParserList = new ParserList();
+            return expect(emptyParserList.getList()).rejects.toEqual(new Error('no parsers added'));
+        });
     });
 
     describe('#getUniqueList()', () => {
@@ -71,6 +76,104 @@ describe('ParserList', () => {
             parserList.addNewParser(new Parser('error'));
             expect.assertions(1);
             return expect(parserList.getUniqueList()).rejects.toEqual(new Error('test error'));
+        });
+    });
+
+    describe('#run()', () => {
+        it('should start interval execution', (done) => {
+            let eventCounter = 0;
+            expect(parserList.interval).toBeUndefined();
+            parserList
+                .addNewParser(new Parser())
+                .on('parser:data', (data) => {
+                    expect(data).toEqual([testData]);
+                    eventCounter += 1;
+                    if (eventCounter === 2) {
+                        done();
+                    }
+                })
+                .run();
+            expect(parserList.interval).toBeDefined();
+        });
+
+        it('should not start interval execution if one is already started', (done) => {
+            let eventCounter = 0;
+            expect(parserList.interval).toBeUndefined();
+            parserList
+                .addNewParser(new Parser())
+                .on('parser:data', (data) => {
+                    expect(data).toEqual([testData]);
+                    eventCounter += 1;
+                    if (eventCounter === 2) {
+                        done();
+                    }
+                })
+                .run();
+            const { interval } = parserList;
+            expect(interval).toBeDefined();
+            parserList.run();
+            expect(parserList.interval).toBe(interval);
+        });
+    });
+
+    describe('#stop()', () => {
+        it('should do nothing if no interval is set', () => {
+            expect(parserList.interval).toBeUndefined();
+            expect(parserList.stop()).toBe(false);
+        });
+
+        it('should not start interval execution if one is already started', () => {
+            expect(parserList.interval).toBeUndefined();
+            parserList
+                .addNewParser(new Parser())
+                .run();
+            const { interval } = parserList;
+            expect(interval).toBeDefined();
+            expect(parserList.stop()).toBe(true);
+            expect(parserList.interval).toBe(null);
+        });
+    });
+
+    describe('#runParsers()', () => {
+        it('should emit data event', (done) => {
+            parserList
+                .addNewParser(new Parser())
+                .on('parser:data', (data) => {
+                    expect(data).toEqual([testData]);
+                    done();
+                })
+                .runParsers();
+        });
+
+        it('should emit error event', (done) => {
+            parserList
+                .addNewParser(new Parser('error'))
+                .on('parser:error', (data) => {
+                    expect(data).toEqual(new Error('test error'));
+                    done();
+                })
+                .runParsers();
+        });
+    });
+
+    describe('#on()', () => {
+        it('should add event handler', () => {
+            const handleEvent = jest.fn();
+            parserList.on('parser:data', handleEvent);
+            const listeners = parserList.eventEmitter.listeners('parser:data');
+            expect(listeners.length).toBe(1);
+        });
+    });
+
+    describe('#off()', () => {
+        it('should remove event handler', () => {
+            const handleEvent = jest.fn();
+            parserList.on('parser:data', handleEvent);
+            const listenersBefore = parserList.eventEmitter.listeners('parser:data');
+            expect(listenersBefore.length).toBe(1);
+            parserList.off('parser:data', handleEvent);
+            const listenersAfter = parserList.eventEmitter.listeners('parser:data');
+            expect(listenersAfter.length).toBe(0);
         });
     });
 });
