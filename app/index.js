@@ -6,7 +6,7 @@ const MetacriticRelease = require('./Release/MetacriticRelease');
 const { kinopoiskConfig, metacriticConfig } = require('../config/parser/config');
 require('./db/connection');
 
-const parserList = new ParserList({ interval: 60 * 1e3 });
+const parserList = new ParserList();
 
 DBRelease.toBeReleased()
     .then((saved) => {
