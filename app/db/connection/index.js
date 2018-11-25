@@ -17,7 +17,7 @@ mongoose.connect(`mongodb://${host}:${port}/${name}`, {
     user: username,
     pass: password,
     useNewUrlParser: true,
-    auth: { authdb: authDbName },
+    auth: { authSource: authDbName },
 });
 
 module.exports = db;
