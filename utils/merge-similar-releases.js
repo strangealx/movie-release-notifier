@@ -1,6 +1,7 @@
-const { min } = Math;
-const mergeDeep = require('./merge-deep');
+const merge = require('lodash.merge');
 const isObject = require('./is-object');
+
+const { min } = Math;
 
 /**
  * merges provided releases
@@ -30,8 +31,8 @@ const mergeSimilarReleases = (...releases) => {
                 result.timestamp = min(result.timestamp, timestamp);
             }
             // merge names and ratings as the most fresh
-            result.name = mergeDeep({}, result.name, name);
-            result.rating = mergeDeep({}, result.rating, rating);
+            result.name = merge({}, result.name, name);
+            result.rating = merge({}, result.rating, rating);
         }
         return result;
     }, output);
