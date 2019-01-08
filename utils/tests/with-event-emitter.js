@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events');
-const withEventEmitter = require('../withEventEmitter');
+const withEventEmitter = require('../with-event-emitter');
 
 describe('utils', () => {
     describe('#withEventEmitter()', () => {

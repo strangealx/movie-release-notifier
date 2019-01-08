@@ -24,7 +24,7 @@ describe('MongoReleaseModel', () => {
             user: username,
             pass: password,
             useNewUrlParser: true,
-            auth: { authdb: authDbName },
+            auth: { authSource: authDbName },
         });
     });
 

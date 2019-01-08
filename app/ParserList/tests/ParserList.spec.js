@@ -1,6 +1,6 @@
 const Parser = require('./__mocks__/Parser').default;
 const testData = require('./__mocks__/Parser').data;
-const ParserList = require('../');
+const ParserList = require('../ParserList');
 
 describe('ParserList', () => {
     let parserList;

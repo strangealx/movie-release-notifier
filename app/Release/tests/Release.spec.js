@@ -1,4 +1,4 @@
-const Release = require('../');
+const Release = require('../Release');
 
 describe('Release', () => {
     const { stringify } = JSON;

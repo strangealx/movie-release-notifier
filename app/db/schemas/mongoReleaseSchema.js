@@ -68,7 +68,7 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
                     .then(savedDoc => (
                         Promise.resolve({
                             type: 'saved',
-                            data: savedDoc,
+                            data: savedDoc.toObject(),
                         })
                     ));
             }
@@ -89,7 +89,8 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
                 });
             }
             // update db document
-            return this.model('MongoRelease').updateOne({ _id: doc._id }, { $set: merged })
+            return this.model('MongoRelease')
+                .updateOne({ _id: doc._id }, { $set: merged })
                 .then(() => (
                     Promise.resolve({
                         type: 'modified',
@@ -140,7 +141,10 @@ mongoReleaseSchema.statics.toBeReleased = function toBeReleased() {
     const today = new Date().setHours(0, 0, 0, 0);
     return this
         .find({ timestamp: { $gte: today } })
-        .sort({ timestamp: 1 });
+        .sort({ timestamp: 1 })
+        .then(saved => Promise.resolve(
+            saved.map(doc => doc.toObject()),
+        ));
 };
 
 module.exports = mongoReleaseSchema;

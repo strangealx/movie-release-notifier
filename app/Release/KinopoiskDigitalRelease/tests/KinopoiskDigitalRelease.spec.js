@@ -1,4 +1,4 @@
-const KinopoiskDigitalRelease = require('../');
+const KinopoiskDigitalRelease = require('../KinopoiskDigitalRelease');
 const { kinopoiskDocument, randomDocument } = require('./test-data');
 
 const { body } = document;
