@@ -5,8 +5,11 @@ const { hours } = require('../../config/watcher/config');
 const MAX_TIMEOUT = 2147483647;
 
 // TODO:
+// ***
 // use @withEventEmitter instead of function call
 // only with babel, and we dont need babel for now
+// ***
+// add Joi release validation
 
 class Watcher {
     constructor() {
@@ -48,7 +51,7 @@ class Watcher {
             throw new Error('expected release is not in stack');
         }
         clearTimeout(this.list[release._id].timeout);
-        this.list[release._id] = undefined;
+        delete this.list[release._id];
     }
 
     /**
@@ -111,7 +114,7 @@ class Watcher {
      * @private
      */
     emit() {
-        throw new Error('there must be EventEmitter decorator, but there is not');
+        throw new Error('there must be an EventEmitter decorator, but there is not');
     }
 }
 
