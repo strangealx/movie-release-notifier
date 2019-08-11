@@ -31,10 +31,10 @@ parserList
                     count += 1;
                     console.log(`${count}. ${type}: ${data.name.ru || data.name.en}`);
                 })
-                .catch(console.error.bind(console, 'saveOrUpdate error: '));
+                .catch(console.error.bind(console, `save or update: ${JSON.stringify(release)} `));
         });
     })
-    .on('parser:error', console.error.bind(console, 'parser error: '));
+    .on('parser:error', console.error.bind(console, 'HTTP: '));
 
 watcher.on('movie:released', (data) => {
     console.log(data);
@@ -50,4 +50,4 @@ DBRelease.toBeReleased()
             .addNewParser(new Parser(MetacriticRelease, metacriticConfig))
             .run();
     })
-    .catch(console.error.bind(console, 'db error: '));
+    .catch(console.error.bind(console, 'db: '));

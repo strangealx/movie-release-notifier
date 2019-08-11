@@ -84,6 +84,7 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
                     type: 'canceled',
                     data: {
                         ...stored,
+                        timestamp: new Date(stored.timestamp),
                         _id: doc._id,
                     },
                 });
@@ -96,6 +97,7 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
                         type: 'modified',
                         data: {
                             ...merged,
+                            timestamp: new Date(merged.timestamp),
                             _id: doc._id,
                         },
                     })

@@ -11,7 +11,7 @@ const mergeSimilarReleases = require('../../utils/merge-similar-releases');
  * @type {Object}
  * @memberof ParserList
  */
-const config = {
+const defaults = {
     /**
      * parse interval as milliseconds (6 hours)
      * @type {Number}
@@ -32,7 +32,7 @@ class ParserList {
     constructor(options) {
         // merge defaults and provided params
         this.options = {
-            ...config,
+            ...defaults,
             ...options,
         };
         // parsers list
@@ -146,7 +146,7 @@ class ParserList {
      * @throws {Error}
      */
     emit() {
-        throw new Error('there must be EventEmitter decorator, but there is not');
+        throw new Error('there must be an EventEmitter decorator, but there is not');
     }
 }
 
