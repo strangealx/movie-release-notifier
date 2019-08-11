@@ -3,10 +3,10 @@ const { metacriticDocument, randomDocument } = require('./test-data');
 
 const { body } = document;
 
-describe('KinopoiskDigitalRelease', () => {
+describe('MetacriticDigitalRelease', () => {
     let release;
     const { stringify } = JSON;
-    const enName = 'american dresser';
+    const enName = 'into the ashes';
 
     beforeEach(() => {
         body.innerHTML = metacriticDocument;
@@ -14,7 +14,7 @@ describe('KinopoiskDigitalRelease', () => {
     });
 
     describe('#name', () => {
-        it('should parse release name from kinopoisk', () => {
+        it('should parse release name from metacritic', () => {
             expect(stringify(release.name)).toBe(stringify({ name: { en: enName } }));
         });
 
@@ -26,8 +26,8 @@ describe('KinopoiskDigitalRelease', () => {
     });
 
     describe('#rating', () => {
-        it('should parse release rating from kinopoisk', () => {
-            expect(stringify(release.rating)).toBe(stringify({ rating: { metacritic_score: 24 } }));
+        it('should parse release rating from metacritic', () => {
+            expect(stringify(release.rating)).toBe(stringify({ rating: { metacritic_score: 50 } }));
         });
 
         it('should handle unexpeted html', () => {
@@ -38,8 +38,8 @@ describe('KinopoiskDigitalRelease', () => {
     });
 
     describe('#date', () => {
-        it('should parse release date from kinopoisk', () => {
-            expect(stringify(release.date)).toBe(stringify({ timestamp: 1537462800000 }));
+        it('should parse release date from metacritic', () => {
+            expect(stringify(release.date)).toBe(stringify({ timestamp: 1567443600000 }));
         });
 
         it('should handle unexpeted html', () => {
@@ -50,11 +50,11 @@ describe('KinopoiskDigitalRelease', () => {
     });
 
     describe('#parsed', () => {
-        it('should parse full release data from kinopoisk', () => {
+        it('should parse full release data from metacritic', () => {
             expect(stringify(release.parsed)).toBe(stringify({
                 name: { en: enName },
-                timestamp: 1537462800000,
-                rating: { metacritic_score: 24 },
+                timestamp: 1567443600000,
+                rating: { metacritic_score: 50 },
             }));
         });
 

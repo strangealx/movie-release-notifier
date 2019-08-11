@@ -36,7 +36,7 @@ class MetacriticRelease extends Release {
      */
     get date() {
         const { release } = this;
-        let date = release.querySelectorAll('.clamp-details span')[1];
+        let date = release.querySelectorAll('.clamp-details span')[0];
         if (!date) return super.date;
         date = date
             .textContent
