@@ -4,11 +4,15 @@ const ParserList = require('./ParserList');
 const Watcher = require('./Watcher');
 const KinopoiskDigitalRelease = require('./Release/KinopoiskDigitalRelease');
 const MetacriticRelease = require('./Release/MetacriticRelease');
+const TelegramBot = require('./TelegramBot');
 const { kinopoiskConfig, metacriticConfig } = require('../config/parser/config');
+const { token: telegramToken, chatId: telegramChatId } = require('../config/telegram/config');
+const markdown = require('../utils/release-to-markdown');
 require('./db/connection');
 
 const parserList = new ParserList();
 const watcher = new Watcher();
+const telegramBot = new TelegramBot(telegramToken);
 
 parserList
     .on('parser:data', (releaseList) => {
@@ -37,7 +41,11 @@ parserList
     .on('parser:error', console.error.bind(console, 'HTTP: '));
 
 watcher.on('movie:released', (data) => {
-    console.log(data);
+    // TODO: group releases to 1 message
+    telegramBot.sendMessage(
+        telegramChatId,
+        markdown(data),
+    );
 });
 
 DBRelease.toBeReleased()
