@@ -4,20 +4,22 @@ const ParserList = require('./ParserList');
 const Watcher = require('./Watcher');
 const KinopoiskDigitalRelease = require('./Release/KinopoiskDigitalRelease');
 const MetacriticRelease = require('./Release/MetacriticRelease');
-const TelegramBot = require('./TelegramBot');
+const ReleaseBot = require('./TelegramBot/ReleaseBot/ReleaseBot');
 const { kinopoiskConfig, metacriticConfig } = require('../config/parser/config');
-const { token: telegramToken, chatId: telegramChatId } = require('../config/telegram/config');
-const markdown = require('../utils/release-to-markdown');
 require('./db/connection');
 
 const parserList = new ParserList();
 const watcher = new Watcher();
-const telegramBot = new TelegramBot(telegramToken);
+const releaseBot = new ReleaseBot();
 
 parserList
     .on('parser:data', (releaseList) => {
-        let count = 0;
-        releaseList.forEach((release) => {
+        let counter = {
+            saved: 0,
+            modified: 0,
+            canceled: 0,
+        };
+        releaseList.forEach((release, index) => {
             const dbRelease = new DBRelease(release);
             dbRelease.saveOrUpdate()
                 .then((doc) => {
@@ -32,20 +34,24 @@ parserList
                         default:
                             break;
                     }
-                    count += 1;
-                    console.log(`${count}. ${type}: ${data.name.ru || data.name.en}`);
+                    counter[type] += 1;
+                    if (index === releaseList.length - 1) {
+                        console.log(
+                            Object.keys(counter)
+                                .map(key => `${key}: ${counter[key]}`)
+                                .join(', '),
+                        );
+                    }
                 })
                 .catch(console.error.bind(console, `save or update: ${JSON.stringify(release)} `));
         });
     })
     .on('parser:error', console.error.bind(console, 'HTTP: '));
 
-watcher.on('movie:released', (data) => {
+watcher.on('watcher:released', (data) => {
     // TODO: group releases to 1 message
-    telegramBot.sendMessage(
-        telegramChatId,
-        markdown(data),
-    );
+    releaseBot.sendMessage(data)
+        .then(console.log);
 });
 
 DBRelease.toBeReleased()
