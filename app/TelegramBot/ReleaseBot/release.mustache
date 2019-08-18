@@ -1,0 +1,31 @@
+{{#firstRelease}}
+{{#name}}
+Теперь *"{{#ru}}{{ru}}{{/ru}}{{^ru}}{{en}}{{/ru}}"{{#ru}}{{#en}} ({{en}}){{/en}}{{/ru}}* доступен в качестве.
+{{/name}}
+{{#rating}}
+{{#kinopoisk_score}}
+    _Кинопоиск: {{kinopoisk_score}}_
+{{/kinopoisk_score}}
+{{#metacritic_score}}
+    _Метакритик: {{metacritic_score}}{{#metacritic_user_score}} | {{metacritic_user_score}}{{/metacritic_user_score}}_
+{{/metacritic_score}}
+{{/rating}}
+{{/firstRelease}}
+{{#rest.length}}
+
+А также:
+{{#rest}}
+{{#name}}
+*"{{#ru}}{{ru}}{{/ru}}{{^ru}}{{en}}{{/ru}}"{{#ru}}{{#en}} ({{en}}){{/en}}{{/ru}}*
+{{/name}}
+{{#rating}}
+{{#kinopoisk_score}}
+    _Кинопоиск: {{kinopoisk_score}}_
+{{/kinopoisk_score}}
+{{#metacritic_score}}
+    _Метакритик: {{metacritic_score}}{{#metacritic_user_score}} | {{metacritic_user_score}}{{/metacritic_user_score}}_
+{{/metacritic_score}}
+{{/rating}}
+{{/rest}}
+
+{{/rest.length}}
