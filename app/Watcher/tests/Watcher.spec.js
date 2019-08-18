@@ -12,51 +12,79 @@ describe('Release', () => {
 
     beforeEach(() => {
         watcher = new Watcher();
+        jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+        jest.clearAllTimers();
     });
 
     it('should create an instance', () => {
         expect(watcher.list).toBeInstanceOf(Object);
+        expect(watcher.timeout).toBeInstanceOf(Object);
     });
 
     describe('#getReleaseTimeout()', () => {
         it('should return timeout until release date', () => {
-            const timeout = watcher.getReleaseTimeout(release.timestamp);
+            const timeout = watcher.getReleaseTimeLeft(release.timestamp);
             expect(timeout > 0).toBe(true);
         });
 
         it('should return 0 if release date less then now', () => {
-            const timeout = watcher.getReleaseTimeout(new Date(Date.now() - 24 * 60 * 60 * 1e3));
+            const timeout = watcher.getReleaseTimeLeft(new Date(Date.now() - 24 * 60 * 60 * 1e3));
             expect(timeout).toBe(0);
         });
     });
 
-    describe('#setReleaseTimeout()', () => {
-        it('should return timeout id', (done) => {
-            const timeout = watcher.setReleaseTimeout(release);
-            watcher.removeRelease = jest.fn();
-            watcher.on('movie:released', (emitted) => {
-                expect(emitted._id).toBe(release._id);
-                expect(watcher.removeRelease).toBeCalled();
-                done();
-            });
-            expect(timeout > 0).toBe(true);
+    describe('#createTimeout()', () => {
+        it('should create new timeout', () => {
+            const groupName = release.timestamp.getTime();
+            watcher.addNewRelease(release);
+            expect(watcher.timeout[groupName].id).toStrictEqual([release._id]);
+            expect(watcher.timeout[groupName].timeoutId).toBeDefined();
             expect(setTimeout).toHaveBeenCalledTimes(1);
-            jest.runAllTimers();
         });
 
-        it('should set several timeouts recursively on too big timeout', (done) => {
+        it('should not create new timeout on equal release timestamps', () => {
+            const groupName = release.timestamp.getTime();
+            watcher.addNewRelease(release);
+            watcher.addNewRelease({ ...release, _id: release._id + 1 });
+            expect(watcher.timeout[groupName].id).toStrictEqual(
+                [release._id, release._id + 1],
+            );
+            expect(watcher.timeout[groupName].timeoutId).toBeDefined();
+            expect(setTimeout).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('#setReleaseTimeout()', () => {
+        it('should return timeout id', () => {
+            const groupName = release.timestamp.getTime() 
+            const timeout = {
+                [groupName]: {
+                    timeoutId: undefined,
+                    id: [release._id],
+                }
+            }
+            const timeoutId = watcher.setReleaseTimeout(timeout, release.timestamp);
+            expect(timeoutId > 0).toBe(true);
+            expect(setTimeout).toHaveBeenCalledTimes(1);
+        });
+
+        it('should set several timeouts recursively on too big timeout', () => {
             release.timestamp = new Date(Date.now() + 2147483647 * 2);
-            const timeout = watcher.setReleaseTimeout(release);
-            watcher.removeRelease = jest.fn();
-            watcher.list[release._id] = {};
-            watcher.on('movie:released', (emitted) => {
-                expect(emitted._id).toBe(release._id);
-                expect(setTimeout).toHaveBeenCalledTimes(4);
-                expect(watcher.removeRelease).toBeCalled();
-                done();
-            });
-            expect(timeout > 0).toBe(true);
-            jest.runAllTimers();
+            const groupName = release.timestamp.getTime();
+            const timeout = {
+                [groupName]: {
+                    timeoutId: undefined,
+                    id: [release._id],
+                }
+            }
+            const timeoutId = watcher.setReleaseTimeout(timeout, release.timestamp);
+            expect(timeoutId > 0).toBe(true);
+            jest.runOnlyPendingTimers();
+            expect(setTimeout).toHaveBeenCalledTimes(2);
+            expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 2147483647);
         });
     });
 
@@ -72,16 +100,16 @@ describe('Release', () => {
         it('should add new release to release list', () => {
             const { stringify } = JSON;
             watcher.addNewRelease(release);
-            expect(stringify(watcher.list[1].data)).toBe(stringify(release));
+            expect(stringify(watcher.list[1])).toBe(stringify(release));
         });
 
-        it('should throw on adding already added release', () => {
+        it('should add 2 releases in a row', () => {
             const { stringify } = JSON;
-            const release2 = merge({}, release, { _id: 2 });
+            const releaseNext = { ...release, _id: 2 };
             watcher.addNewRelease(release);
-            watcher.addNewRelease(release2);
-            expect(stringify(watcher.list[1].data)).toBe(stringify(release));
-            expect(stringify(watcher.list[2].data)).toBe(stringify(release2));
+            watcher.addNewRelease(releaseNext);
+            expect(stringify(watcher.list[1])).toBe(stringify(release));
+            expect(stringify(watcher.list[2])).toBe(stringify(releaseNext));
         });
 
         it('should throw on adding already added release', () => {
@@ -127,15 +155,37 @@ describe('Release', () => {
         it('should modify release', () => {
             const { stringify } = JSON;
             watcher.addNewRelease(release);
-            const release2 = merge({}, release, { _name: { ru: 'test1' } });
-            watcher.modifyRelease(release2);
-            expect(stringify(watcher.list[1].data)).toBe(stringify(release2));
+            const releaseModified= merge({}, release, { _name: { ru: 'test1' } });
+            watcher.modifyRelease(releaseModified);
+            expect(stringify(watcher.list[1])).toBe(stringify(releaseModified));
         });
 
         it('should throw on modifying non existing release', () => {
             expect(() => {
                 watcher.modifyRelease(release);
             }).toThrowError('expected release is not in stack');
+        });
+    });
+
+    describe('#emitReleaseData()', () => {
+        beforeEach(() => {
+            release = {
+                _id: 1,
+                name: { ru: 'test', en: 'test' },
+                timestamp: new Date(Date.now() + 24 * 60 * 60 * 1e3),
+            };
+        });
+
+        it('should emit "watcher:released" on release ready', (done) => {
+            const { stringify } = JSON;
+            watcher.removeRelease = jest.fn();
+            watcher.addNewRelease(release);
+            watcher.on('watcher:released', (data) => {
+                expect(stringify(data)).toBe(stringify([release]));
+                expect(watcher.removeRelease).toBeCalledWith(release);
+                done();
+            })
+            jest.runAllTimers();
         });
     });
 });
