@@ -11,10 +11,6 @@ const {
 
 const MongoRelease = mongoose.model('MongoRelease', mongoReleaseSchema);
 
-console.error = jest.fn((err) => {
-    throw new Error(err);
-});
-
 describe('MongoReleaseModel', () => {
     let release;
     let data;
@@ -108,7 +104,7 @@ describe('MongoReleaseModel', () => {
             const nextRelease = new MongoRelease(data);
             return nextRelease.saveOrUpdate()
                 .then((savedData) => {
-                    expect(savedData.type).toBe('canceled');
+                    expect(savedData.type).toBe('skipped');
                 });
         });
 
@@ -126,7 +122,7 @@ describe('MongoReleaseModel', () => {
             const nextRelease = new MongoRelease(data);
             return nextRelease.saveOrUpdate()
                 .then((savedData) => {
-                    expect(savedData.type).toBe('canceled');
+                    expect(savedData.type).toBe('skipped');
                 });
         });
 
@@ -134,10 +130,10 @@ describe('MongoReleaseModel', () => {
             const nextRelease = new MongoRelease({});
             return nextRelease.saveOrUpdate()
                 .then((savedData) => {
-                    expect(savedData.type).toBe('canceled');
+                    expect(savedData.type).toBe('skipped');
                 })
                 .catch((e) => {
-                    expect(e.message).toBe('release item is invalid: no name or timestamp provided');
+                    expect(e.message).toBe('release item is invalid: name is undefined, timestamp is undefined');
                 });
         });
 
@@ -148,8 +144,7 @@ describe('MongoReleaseModel', () => {
                     expect(savedData).toBeUndefined();
                 })
                 .catch((e) => {
-                    expect(e.message.trim()).toBe('find error:');
-                    expect(console.error).toBeCalledTimes(1);
+                    expect(e.message.trim()).toBe('MongoRelease validation failed: name: en or ru must be provided');
                 });
         });
     });
