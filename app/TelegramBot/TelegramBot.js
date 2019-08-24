@@ -8,6 +8,9 @@ class TelegramBot {
      * @param {String} token api token
      */
     constructor(token) {
+        if (!token) {
+            throw new Error(`No valid api token provided: ${token}`);
+        }
         this.token = token;
     }
 
@@ -93,13 +96,16 @@ class TelegramBot {
             })
                 .then((data) => {
                     const { parse } = JSON;
-                    let parsed;
+                    let result;
                     try {
-                        parsed = parse(data);
+                        result = parse(data);
                     } catch (e) {
-                        return reject(e);
+                        result = data;
                     }
-                    return resolve(parsed);
+                    return resolve({
+                        message,
+                        result,
+                    });
                 })
                 .catch((e) => reject(e));
         });

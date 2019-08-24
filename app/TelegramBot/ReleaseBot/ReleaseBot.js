@@ -14,7 +14,7 @@ class ReleaseBot extends TelegramBot {
     }
     /**
      * prepares message to be sent
-     * @param {Array[Object]} releaseList list of releases to be notified
+     * @param {Object[]} releaseList list of releases to be notified
      * @returns {String} token value
      * @private
      */
@@ -24,14 +24,16 @@ class ReleaseBot extends TelegramBot {
                 'releaseList should be an array',
             );
         }
-        const firstRelease = releaseList.splice(0,1);
-        const message = Mustache.render(tmpl, {
-            firstRelease,
-            rest: releaseList,
-        });
+        const message = Mustache.render(tmpl, { releaseList });
         return message.trim();
     }
 
+    /**
+     * makes api request
+     * @param {Object[]} message array of release objects
+     * @returns {Promise<Object>} request response
+     * @private
+     */
     sendMessage(releaseList) {
         return super.sendMessage(telegramNotifyId, releaseList);
     }
