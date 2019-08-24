@@ -1,6 +1,9 @@
 const winston = require('winston');
 const Transport = require('winston-transport');
 const DebugBot = require('../app/TelegramBot/DebugBot');
+const { logPath } = require('../config/logs/config.js');
+
+const path = path = String(logPath || '').trim().replace(/\/$/, '');
 
 class Telegram extends Transport {
     constructor(opts) {
@@ -14,8 +17,7 @@ class Telegram extends Transport {
         });
         const { bot } = this;
         bot.sendMessage(info);
-      // Perform the writing to the remote service
-      callback();
+        callback();
     }
 };
 
@@ -23,8 +25,8 @@ const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
     transports: [
-      new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-      new winston.transports.File({ filename: 'logs/combined.log' }),
+      new winston.transports.File({ filename: `${path}/error.log`, level: 'error' }),
+      new winston.transports.File({ filename: `${path}/combined.log` }),
       new Telegram(),
     ]
 });
