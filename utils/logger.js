@@ -3,7 +3,7 @@ const Transport = require('winston-transport');
 const DebugBot = require('../app/TelegramBot/DebugBot');
 const { logPath } = require('../config/logs/config.js');
 
-const path = path = String(logPath || '').trim().replace(/\/$/, '');
+const path = String(logPath || '').trim().replace(/\/$/, '');
 
 class Telegram extends Transport {
     constructor(opts) {
