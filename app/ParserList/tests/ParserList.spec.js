@@ -25,10 +25,9 @@ describe('ParserList', () => {
             expect(parserList.parserList.length).toBe(1);
         });
 
-        it('should handle not Parser instance provided', () => {
+        it('should handle no Parser instance provided', () => {
             parserList.addNewParser('tet');
             parserList.addNewParser();
-            expect(console.error).toHaveBeenCalled();
             expect(parserList.parserList.length).toBe(0);
         });
     });

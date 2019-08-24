@@ -88,7 +88,7 @@ describe('TelegramBot', () => {
             expect.assertions(1);
             return expect(
                 bot.sendMessage('1', message)
-            ).rejects.toEqual(new SyntaxError('Unexpected token r in JSON at position 0'));
+            ).resolves.toEqual({ message: 'newTestMessage', result: 'request success' });
         });
 
         it('should throw on invalid chat id provided message', () => {

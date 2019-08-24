@@ -20,7 +20,9 @@ describe('ReleaseBot', () => {
         it('should prepare a markdown message', () => {
             const message = bot._prepareMessage([release]);
             expect(message).toBe([
-                'Теперь *"test" (test)* доступен в качестве.',
+                'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
+                '',
+                '*"test" (test)*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 
@@ -29,11 +31,12 @@ describe('ReleaseBot', () => {
         it('should prepare a markdown message for several releases', () => {
             const message = bot._prepareMessage([release, release]);
             expect(message).toBe([
-                'Теперь *"test" (test)* доступен в качестве.',
+                'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
+                '',
+                '*"test" (test)*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
                 '',
-                'А также:',
                 '*"test" (test)*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
@@ -44,7 +47,9 @@ describe('ReleaseBot', () => {
             delete release.rating.metacritic_score;
             const message = bot._prepareMessage([release]);
             expect(message).toBe([
-                'Теперь *"test" (test)* доступен в качестве.',
+                'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
+                '',
+                '*"test" (test)*',
                 '    _Кинопоиск: 100_',
             ].join('\n')); 
         });
@@ -53,7 +58,9 @@ describe('ReleaseBot', () => {
             delete release.rating.kinopoisk_score;
             const message = bot._prepareMessage([release]);
             expect(message).toBe([
-                'Теперь *"test" (test)* доступен в качестве.',
+                'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
+                '',
+                '*"test" (test)*',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 
         });
@@ -62,7 +69,9 @@ describe('ReleaseBot', () => {
             delete release.name.en;
             const message = bot._prepareMessage([release]);
             expect(message).toBe([
-                'Теперь *"test"* доступен в качестве.',
+                'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
+                '',
+                '*"test"*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 
@@ -72,7 +81,9 @@ describe('ReleaseBot', () => {
             delete release.name.ru;
             const message = bot._prepareMessage([release]);
             expect(message).toBe([
-                'Теперь *"test"* доступен в качестве.',
+                'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
+                '',
+                '*"test"*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 
