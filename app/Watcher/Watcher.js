@@ -115,7 +115,7 @@ class Watcher {
      * sets release timeout(s)
      * @param {Object} timeout timeout object
      * @param {Number} timeout.timeoutId timeout id
-     * @param {Array[String]} timeout.id list of related id's
+     * @param {String[]} timeout.id list of related id's
      * @param {Date} timestamp timestamp to fire event     
      * @returns {Number} timeout id
      * @private

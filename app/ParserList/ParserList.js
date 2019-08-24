@@ -1,6 +1,7 @@
 const withEventEmitter = require('../../utils/with-event-emitter');
 const Parser = require('../Parser');
 const mergeSimilarReleases = require('../../utils/merge-similar-releases');
+const logger = require('../../utils/logger');
 
 // TODO:
 // use @withEventEmitter instead of function call
@@ -72,7 +73,7 @@ class ParserList {
      */
     addNewParser(parser) {
         if (!(parser instanceof Parser)) {
-            console.error('Parser should be an instance of Parser');
+            logger.error('Parser should be an instance of Parser');
             return this;
         }
         // add new parser to the list

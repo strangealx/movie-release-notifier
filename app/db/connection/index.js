@@ -7,11 +7,12 @@ const {
     port,
     authDbName,
 } = require('../../../config/db/config');
+const logger = require('../../../utils/logger');
 
 const db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'db connection error: '));
-db.once('open', console.log.bind(console, 'db connected'));
+db.on('error', logger.error.bind(logger, 'db connection error: '));
+db.once('open', logger.info.bind(logger, 'db connected'));
 
 mongoose.connect(`mongodb://${host}:${port}/${name}`, {
     user: username,

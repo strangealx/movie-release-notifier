@@ -6,6 +6,7 @@ const KinopoiskDigitalRelease = require('./Release/KinopoiskDigitalRelease');
 const MetacriticRelease = require('./Release/MetacriticRelease');
 const ReleaseBot = require('./TelegramBot/ReleaseBot/ReleaseBot');
 const { kinopoiskConfig, metacriticConfig } = require('../config/parser/config');
+const logger = require('../utils/logger');
 require('./db/connection');
 
 const parserList = new ParserList();
@@ -17,44 +18,51 @@ parserList
         let counter = {
             saved: 0,
             modified: 0,
-            canceled: 0,
+            skipped: 0,
         };
         releaseList.forEach((release, index) => {
             const dbRelease = new DBRelease(release);
             dbRelease.saveOrUpdate()
                 .then((doc) => {
-                    const { data, type } = doc;
+                    const { release, type } = doc;
                     switch (type) {
                         case 'modified':
-                            watcher.modifyRelease(data);
+                            watcher.modifyRelease(release);
                             break;
                         case 'saved':
-                            watcher.addNewRelease(data);
+                            watcher.addNewRelease(release);
                             break;
                         default:
                             break;
                     }
                     counter[type] += 1;
                     if (index === releaseList.length - 1) {
-                        console.log(
+                        logger.info(
                             Object.keys(counter)
                                 .map(key => `${key}: ${counter[key]}`)
                                 .join(', '),
                         );
                     }
                 })
-                .catch(console.error.bind(console, `save or update: ${JSON.stringify(release)} `));
+                .catch(logger.error);
         });
     })
-    .on('parser:error', console.error.bind(console, 'HTTP: '));
+    .on('parser:error', logger.error.bind(logger, 'HTTP: '));
 
 watcher.on('watcher:released', (data) => {
-    // TODO: group releases to 1 message
     releaseBot.sendMessage(data)
-        .then(console.log);
+        .then(({ message, result }) => {
+            message.map((release) => {
+                release.notified = true;
+                release.save()
+                    .catch(logger.error);
+            });
+            return Promise.resolve(result);
+        })
+        .catch(logger.error)
 });
 
-DBRelease.toBeReleased()
+DBRelease.toBeNotified()
     .then((saved) => {
         saved.forEach((release) => {
             watcher.addNewRelease(release);
@@ -64,4 +72,4 @@ DBRelease.toBeReleased()
             .addNewParser(new Parser(MetacriticRelease, metacriticConfig))
             .run();
     })
-    .catch(console.error.bind(console, 'db: '));
+    .catch(logger.error.bind(logger, 'db: '));
