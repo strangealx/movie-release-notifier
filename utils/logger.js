@@ -12,12 +12,16 @@ class Telegram extends Transport {
     }
    
     log(info, callback) {
-        setImmediate(() => {
-            this.emit('logged', info);
-        });
         const { bot } = this;
-        bot.sendMessage(info);
-        callback();
+        bot.sendMessage(info)
+            .then(({ result }) => {
+                callback(null, result);
+                this.emit('logged', info);
+            })
+            .catch((error) => {
+                callback(error);
+                this.emit('error', error);
+            })
     }
 };
 
