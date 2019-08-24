@@ -18,7 +18,8 @@
     "mongoose": "^5.3.13",
     "mustache": "^3.0.1",
     "request": "^2.88.0",
-    "rss-parser": "^3.5.4"
+    "rss-parser": "^3.5.4",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "docdash": "^1.0.0",
