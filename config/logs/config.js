@@ -1,4 +1,4 @@
-const logPath = 'log';
+const logPath = 'logs';
 
 module.exports = {
     logPath
