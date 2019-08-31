@@ -8,6 +8,7 @@ describe('ReleaseBot', () => {
         bot = new ReleaseBot('testToken');
         release = {
             name: { ru: 'test', en: 'test' },
+            originalName: { ru: 'Test', en: 'Test' },
             rating: {
                 kinopoisk_score: 100,
                 metacritic_score: 10,
@@ -22,7 +23,7 @@ describe('ReleaseBot', () => {
             expect(message).toBe([
                 'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
                 '',
-                '*"test" (test)*',
+                '*1. "Test" (Test)*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 
@@ -33,11 +34,10 @@ describe('ReleaseBot', () => {
             expect(message).toBe([
                 'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
                 '',
-                '*"test" (test)*',
+                '*1. "Test" (Test)*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
-                '',
-                '*"test" (test)*',
+                '*2. "Test" (Test)*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 
@@ -49,7 +49,7 @@ describe('ReleaseBot', () => {
             expect(message).toBe([
                 'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
                 '',
-                '*"test" (test)*',
+                '*1. "Test" (Test)*',
                 '    _Кинопоиск: 100_',
             ].join('\n')); 
         });
@@ -60,18 +60,19 @@ describe('ReleaseBot', () => {
             expect(message).toBe([
                 'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
                 '',
-                '*"test" (test)*',
+                '*1. "Test" (Test)*',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 
         });
 
         it('should prepare a markdown message release without en name', () => {
             delete release.name.en;
+            delete release.originalName.en;
             const message = bot._prepareMessage([release]);
             expect(message).toBe([
                 'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
                 '',
-                '*"test"*',
+                '*1. "Test"*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 
@@ -79,11 +80,12 @@ describe('ReleaseBot', () => {
 
         it('should prepare a markdown message release without ru name', () => {
             delete release.name.ru;
+            delete release.originalName.ru;
             const message = bot._prepareMessage([release]);
             expect(message).toBe([
                 'С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:',
                 '',
-                '*"test"*',
+                '*1. "Test"*',
                 '    _Кинопоиск: 100_',
                 '    _Метакритик: 10 | 1_',
             ].join('\n')); 

@@ -16,18 +16,32 @@ class MetacriticRelease extends Release {
     }
 
     /**
+     * release original name object
+     * @type {Object}
+     */
+    get originalName() {
+        const { release } = this;
+        let name = release.querySelector('a.title');
+        if (!name) {
+            return super.originalName;
+        }
+        name = name
+            .textContent
+            .trim();
+        return { originalName: { en: name } };
+    }
+    
+    /**
      * release name object
      * @type {Object}
      */
     get name() {
-        const { release } = this;
-        let name = release.querySelector('a.title');
-        if (!name) return super.name;
-        name = name
-            .textContent
-            .toLowerCase()
-            .trim();
-        return { name: { en: name } };
+        let { originalName: { en } } = this.originalName;
+        if (!en) {
+            return super.name;
+        }
+        en = en.toLowerCase();
+        return { name: { en } };
     }
 
     /**

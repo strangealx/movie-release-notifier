@@ -15,13 +15,14 @@ const mergeSimilarReleases = (...releases) => {
         // that less on next steps
         timestamp: Number.MAX_SAFE_INTEGER,
         name: {},
+        originalName: {},
         rating: {},
     };
     return releases.reduce((prev, release) => {
         const result = prev;
         if (isObject(release)) {
             let { timestamp } = release;
-            const { name, rating } = release;
+            const { name, rating, originalName } = release;
             if (timestamp instanceof Date) {
                 timestamp = +timestamp.getTime();
             }
@@ -31,6 +32,7 @@ const mergeSimilarReleases = (...releases) => {
                 result.timestamp = min(result.timestamp, timestamp);
             }
             // merge names and ratings as the most fresh
+            result.originalName = merge({}, result.originalName, originalName);
             result.name = merge({}, result.name, name);
             result.rating = merge({}, result.rating, rating);
         }

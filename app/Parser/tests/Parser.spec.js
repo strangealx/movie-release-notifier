@@ -128,6 +128,7 @@ describe('Parser', () => {
 
         it('should process document from jsdom to collection of release objects', () => {
             const result = {
+                originalName: {},
                 name: {
                     en: 'test',
                 },

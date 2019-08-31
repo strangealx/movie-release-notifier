@@ -24,7 +24,13 @@ class ReleaseBot extends TelegramBot {
                 'releaseList should be an array',
             );
         }
-        const message = Mustache.render(tmpl, { releaseList });
+        const preparedList = releaseList.map(
+            (release, index) => ({
+                ...release,
+                order: index + 1,
+            }),
+        );
+        const message = Mustache.render(tmpl, { preparedList });
         return message.trim();
     }
 

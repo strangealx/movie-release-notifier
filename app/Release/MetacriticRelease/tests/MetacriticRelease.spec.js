@@ -7,6 +7,7 @@ describe('MetacriticDigitalRelease', () => {
     let release;
     const { stringify } = JSON;
     const enName = 'into the ashes';
+    const enOriginalName = 'Into the Ashes';
 
     beforeEach(() => {
         body.innerHTML = metacriticDocument;
@@ -52,6 +53,7 @@ describe('MetacriticDigitalRelease', () => {
     describe('#parsed', () => {
         it('should parse full release data from metacritic', () => {
             expect(stringify(release.parsed)).toBe(stringify({
+                originalName: { en: enOriginalName},
                 name: { en: enName },
                 timestamp: 1567443600000,
                 rating: { metacritic_score: 50 },
@@ -62,6 +64,7 @@ describe('MetacriticDigitalRelease', () => {
             body.innerHTML = randomDocument;
             release = new MetacriticDigitalRelease(body);
             expect(stringify(release.parsed)).toBe(stringify({
+                originalName: {},
                 name: {},
                 timestamp: 0,
                 rating: {},

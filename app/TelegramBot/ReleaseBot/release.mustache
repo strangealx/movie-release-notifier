@@ -1,10 +1,10 @@
-{{#releaseList.length}}
+{{#preparedList.length}}
 С сегодняшнего дня следующие фильмы доступны в приемлемом качестве:
 
-{{#releaseList}}
-{{#name}}
-*"{{#ru}}{{ru}}{{/ru}}{{^ru}}{{en}}{{/ru}}"{{#ru}}{{#en}} ({{en}}){{/en}}{{/ru}}*
-{{/name}}
+{{#preparedList}}
+{{#originalName}}
+*{{order}}. "{{#ru}}{{ru}}{{/ru}}{{^ru}}{{en}}{{/ru}}"{{#ru}}{{#en}} ({{en}}){{/en}}{{/ru}}*
+{{/originalName}}
 {{#rating}}
 {{#kinopoisk_score}}
     _Кинопоиск: {{kinopoisk_score}}_
@@ -13,7 +13,5 @@
     _Метакритик: {{metacritic_score}}{{#metacritic_user_score}} | {{metacritic_user_score}}{{/metacritic_user_score}}_
 {{/metacritic_score}}
 {{/rating}}
-
-{{/releaseList}}
-
-{{/releaseList.length}}
+{{/preparedList}}
+{{/preparedList.length}}

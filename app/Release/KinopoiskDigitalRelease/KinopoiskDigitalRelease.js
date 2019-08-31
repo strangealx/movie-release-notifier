@@ -16,30 +16,46 @@ class KinopoiskDigitalRelease extends Release {
     }
 
     /**
-     * release name object
+     * release original name object
      * @type {Object}
      */
-    get name() {
+    get originalName() {
         const { release } = this;
         const name = {};
         let nameRu = '';
         let nameEn = '';
         nameRu = release.querySelector('.name a');
-        if (!nameRu) return super.name;
+        if (!nameRu) return super.originalName;
         nameEn = nameRu
             .parentNode
             .nextSibling
             .nextSibling;
         nameRu = nameRu
             .textContent
-            .toLowerCase()
             .trim();
         nameEn = nameEn
             .textContent
-            .toLowerCase()
+            .trim()
             .replace(/\s\(20[0-9]{2}\)/, '')
-            .replace(/(.*),\s(the)$/, '$2 $1')
-            .trim();
+            .replace(/(.*),\s(The)$/, '$2 $1');
+        if (nameRu) name.ru = nameRu;
+        if (nameEn) name.en = nameEn;
+        return { originalName: { ...name } };
+    }
+
+    /**
+     * release name object
+     * @type {Object}
+     */
+    get name() {
+        const name = {};
+        let { originalName: { en: nameEn, ru: nameRu } } = this.originalName;
+        if (!nameRu) {
+            return super.name;
+        }
+        nameRu = nameRu.toLowerCase(); 
+        nameEn = nameEn
+            .toLowerCase();
         if (nameRu) name.ru = nameRu;
         if (nameEn) name.en = nameEn;
         return { name: { ...name } };

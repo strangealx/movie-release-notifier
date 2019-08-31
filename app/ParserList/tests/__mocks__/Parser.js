@@ -2,6 +2,9 @@ const Parser = require('../../../Parser');
 const ReleaseModel = require('../../../Parser/tests/__mocks__/releaseModel');
 
 const data = {
+    originalName: {
+        en: 'Test',
+    },
     name: {
         en: 'test',
     },

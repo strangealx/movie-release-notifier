@@ -20,10 +20,20 @@ class Release {
      */
     get parsed() {
         return {
+            ...this.originalName,
             ...this.name,
             ...this.date,
             ...this.rating,
         };
+    }
+
+    /**
+     * release original name object
+     * mock
+     * @type {Object}
+     */
+    get originalName() {
+        return { originalName: {} };
     }
 
     /**

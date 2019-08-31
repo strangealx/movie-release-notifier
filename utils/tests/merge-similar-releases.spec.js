@@ -8,6 +8,9 @@ describe('utils', () => {
             name: {
                 ru: 'тест 1',
             },
+            originalName: {
+                ru: 'Тест 1',
+            },
             rating: {
                 kinopoisk_score: 7,
             },
@@ -17,6 +20,10 @@ describe('utils', () => {
             name: {
                 ru: 'тест 1',
                 en: 'test 1',
+            },
+            originalName: {
+                ru: 'Тест 1',
+                en: 'Test 1',
             },
             rating: {
                 metacritic_score: 5,
@@ -29,6 +36,10 @@ describe('utils', () => {
             name: {
                 ru: release1.name.ru,
                 en: release2.name.en,
+            },
+            originalName: {
+                ru: release1.originalName.ru,
+                en: release2.originalName.en,
             },
             rating: {
                 kinopoisk_score: release1.rating.kinopoisk_score,
@@ -50,7 +61,12 @@ describe('utils', () => {
         });
 
         it('should return some defaults on invalid data', () => {
-            const defaultResult = { timestamp: 9007199254740991, name: {}, rating: {} };
+            const defaultResult = {
+                timestamp: 9007199254740991,
+                name: {},
+                originalName: {},
+                rating: {},
+            };
             const merged = mergeSimilarReleases(null, null);
             expect(stringify(merged) === stringify(defaultResult)).toBe(true);
         });

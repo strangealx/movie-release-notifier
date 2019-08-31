@@ -38,6 +38,7 @@ describe('Release', () => {
     describe('#parsed', () => {
         it('should return release packed data', () => {
             expect(stringify(release.parsed)).toBe(stringify({
+                originalName: {},
                 name: {},
                 timestamp: 0,
                 rating: {},

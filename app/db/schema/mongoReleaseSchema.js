@@ -22,6 +22,9 @@ const mongoReleaseSchema = new Schema({
         type: Date,
         required: true,
     },
+    originalName: {
+        type: nameSchema,
+    },
     name: {
         type: nameSchema,
         required: true,
@@ -111,18 +114,20 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
  * @return {Boolean}
  */
 mongoReleaseSchema.methods.isTheSame = function isTheSame(doc) {
-    const { rating, name, timestamp } = this.toObject();
+    const { rating, name, originalName, timestamp } = this.toObject();
     const { stringify } = JSON;
     // data objects should be sorted
     // in the same order, because we compare
     // them as strings
     const newData = {
         timestamp: doc.timestamp,
+        originalName: doc.originalName,
         name: doc.name,
         rating: doc.rating
-    } = doc;
+    };
     const storedData = {
         timestamp: timestamp.getTime(),
+        originalName,
         name,
         rating: rating || {},
     };

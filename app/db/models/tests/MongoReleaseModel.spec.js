@@ -27,6 +27,7 @@ describe('MongoReleaseModel', () => {
     beforeEach(() => {
         data = {
             name: { en: 'test' },
+            originalName: { en: 'Test' },
             rating: { metacritic_score: 1 },
             timestamp: Date.now(),
         };
