@@ -16,6 +16,7 @@ const releaseBot = new ReleaseBot();
 parserList
     .on('parser:data', (releaseList) => {
         let counter = {
+            total: 0,
             saved: 0,
             modified: 0,
             skipped: 0,
@@ -25,6 +26,9 @@ parserList
             dbRelease.saveOrUpdate()
                 .then((doc) => {
                     const { release, type } = doc;
+                    const keys = Object.keys(counter);
+                    counter[type] += 1;
+                    counter.total += 1;
                     switch (type) {
                         case 'modified':
                             watcher.modifyRelease(release);
@@ -35,16 +39,17 @@ parserList
                         default:
                             break;
                     }
-                    counter[type] += 1;
-                    if (index === releaseList.length - 1) {
+                    if (counter.total === releaseList.length) {
                         logger.info(
-                            Object.keys(counter)
+                            keys
                                 .map(key => `${key}: ${counter[key]}`)
                                 .join(', '),
                         );
                     }
                 })
-                .catch(logger.error);
+                .catch((err) => {
+                    logger.error(err.message);
+                });
         });
     })
     .on('parser:error', logger.error.bind(logger, 'HTTP: '));
@@ -55,11 +60,15 @@ watcher.on('watcher:released', (data) => {
             message.map((release) => {
                 release.notified = true;
                 release.save()
-                    .catch(logger.error);
+                    .catch((err) => {
+                        logger.error(err.message);
+                    });
             });
             return Promise.resolve(result);
         })
-        .catch(logger.error)
+        .catch((err) => {
+            logger.error(err.message);
+        });
 });
 
 DBRelease.toBeNotified()

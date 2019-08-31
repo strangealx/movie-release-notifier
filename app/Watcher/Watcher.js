@@ -44,7 +44,7 @@ class Watcher {
     modifyRelease(release) {
         // first remove
         this.removeRelease(release);
-        // the re-add
+        // then re-add
         this.addNewRelease(release);
     }
 
@@ -57,9 +57,9 @@ class Watcher {
      */
     removeRelease(release) {
         const { list, timeout } = this;
-        const { _id } = release;
+        const { _id, name: { ru, en } } = release;
         if (!list[_id]) {
-            throw new Error('expected release is not in stack');
+            throw new Error(`expected release is not in stack: ${ru || en}`);
         }
         const { timestamp } = list[_id];
         const groupName = timestamp.getTime();
