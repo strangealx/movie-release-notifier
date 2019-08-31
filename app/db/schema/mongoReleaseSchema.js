@@ -86,10 +86,10 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
                 });
             }
             // update db document
-            this.name = merged.name;
-            this.rating = merged.rating;
-            this.timestamp = merged.timestamp;
-            return this.save()
+            doc.name = merged.name;
+            doc.rating = merged.rating;
+            doc.timestamp = merged.timestamp;
+            return doc.save()
                 .then((savedDoc) => (
                     Promise.resolve({
                         type: 'modified',
@@ -111,20 +111,25 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
  * @return {Boolean}
  */
 mongoReleaseSchema.methods.isTheSame = function isTheSame(doc) {
-    const { rating, name, timestamp } = this;
+    const { rating, name, timestamp } = this.toObject();
     const { stringify } = JSON;
     // data objects should be sorted
     // in the same order, because we compare
     // them as strings
-    const compareData = {
+    const newData = {
         timestamp: doc.timestamp,
         name: doc.name,
-        rating: doc.rating,
+        rating: doc.rating
+    } = doc;
+    const storedData = {
+        timestamp: timestamp.getTime(),
+        name,
+        rating: rating || {},
     };
     // compares objects data as strings with
     // the most simple way to compare objects
     // but you should take care of objects structure
-    return stringify(compareData) === stringify({ timestamp: timestamp.getTime(), name, rating });
+    return stringify(newData) === stringify(storedData);
 };
 
 /**
