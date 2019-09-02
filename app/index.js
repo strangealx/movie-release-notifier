@@ -55,9 +55,9 @@ parserList
     .on('parser:error', logger.error.bind(logger, 'HTTP: '));
 
 watcher.on('watcher:released', (data) => {
-    releaseBot.sendMessage(data)
-        .then(({ message, result }) => {
-            message.map((release) => {
+    releaseBot.sendMessage(data.map(release => release.toObject()))
+        .then(({ result }) => {
+            data.map((release) => {
                 release.notified = true;
                 release.save()
                     .catch((err) => {
