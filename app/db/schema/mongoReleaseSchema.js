@@ -90,6 +90,7 @@ mongoReleaseSchema.methods.saveOrUpdate = function saveOrUpdate() {
             }
             // update db document
             doc.name = merged.name;
+            doc.originalName = merged.originalName;
             doc.rating = merged.rating;
             doc.timestamp = merged.timestamp;
             return doc.save()
